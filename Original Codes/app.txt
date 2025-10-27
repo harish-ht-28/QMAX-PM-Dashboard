@@ -1,0 +1,318 @@
+// Re-export default App from dashboard to avoid duplicate definitions in this file.
+export { default } from './dashboard';
+const LogTime: React.FC<{ user: typeof usersList[number], projects: Project[] }> = ({ user, projects }) => {
+    const [date, setDate] = useState('2025-10-06');
+    const [projectId, setProjectId] = useState<number | null>(projects[0]?.id ?? null);
+    const [hours, setHours] = useState(1);
+    const [description, setDescription] = useState('');
+
+    const handleSubmit = () => {
+        alert(`Logged ${hours}h on project ${projectId} for ${date}: ${description}`);
+    };
+
+    return (
+        <div>
+            <h2 className="text-xl font-bold mb-2 text-cyan-700">Log Time</h2>
+            <div className="bg-white rounded p-4 shadow mb-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <input className="border px-2 py-1 rounded" type="date" value={date} onChange={e => setDate(e.target.value)} />
+                    <select className="border px-2 py-1 rounded" value={projectId ?? ''} onChange={e => setProjectId(Number(e.target.value))}>
+                        {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                    </select>
+                    <input className="border px-2 py-1 rounded" type="number" value={hours} onChange={e => setHours(Number(e.target.value))} min={0} />
+                </div>
+                <textarea className="border mt-3 p-2 w-full rounded" placeholder="Description" value={description} onChange={e => setDescription(e.target.value)} />
+                <div className="mt-3">
+                    <Button onClick={handleSubmit}>Log Time</Button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const ManageUsers: React.FC = () => (<div><h2 className="font-bold mb-2 text-cyan-700">Manage Users</h2></div>);
+const Reports: React.FC = () => (<div><h2 className="font-bold mb-2 text-cyan-700">Reports</h2></div>);
+const Settings: React.FC = () => (<div><h2 className="font-bold mb-2 text-cyan-700">User Settings</h2></div>);
+const Logout: React.FC = () => {
+    const navigate = useNavigate();
+    React.useEffect(() => {
+        alert("User logged out!");
+        navigate("/dashboard", { replace: true });
+    }, [navigate]);
+    return null;
+};
+
+const ManageProjects: React.FC<{
+    projects: Project[];
+    setProjects: React.Dispatch<React.SetStateAction<Project[]>>;
+}> = ({ projects, setProjects }) => {
+    const [projectName, setProjectName] = useState("");
+    const [assignTo, setAssignTo] = useState("HARISH");
+    const [status, setStatus] = useState<"Active" | "Completed">("Active");
+    const [hours, setHours] = useState(0);
+
+    function addProject() {
+        if (!projectName.trim()) return;
+        setProjects(ps => [
+            ...ps,
+            {
+                id: Math.floor(Math.random() * 100000),
+                name: projectName,
+                assignedTo: [assignTo],
+                status,
+                hours,
+            }
+        ]);
+        setProjectName("");
+        setAssignTo("HARISH");
+        setStatus("Active");
+        setHours(0);
+    }
+
+    function removeProject(id: number) {
+        setProjects(ps => ps.filter(p => p.id !== id));
+    }
+
+    return (
+        <div>
+            <h2 className="text-xl font-bold mb-2 text-cyan-700">Manage &amp; Assign Projects</h2>
+            <div className="mb-3 flex gap-2 flex-wrap">
+                <input className="border px-2 py-1 rounded" value={projectName} onChange={e => setProjectName(e.target.value)} placeholder="Project name" />
+                <select className="border px-2 py-1 rounded" value={assignTo} onChange={e => setAssignTo(e.target.value)}>
+                    {usersList.map(u =>
+                        <option key={u.id} value={u.name}>{u.name}</option>
+                    )}
+                </select>
+                <select className="border px-2 py-1 rounded" value={status} onChange={e => setStatus(e.target.value as any)}>
+                    <option value="Active">Active</option>
+                    <option value="Completed">Completed</option>
+                </select>
+                <input className="border px-2 py-1 rounded" type="number" value={hours} onChange={e => setHours(Number(e.target.value))} placeholder="Hours" />
+                <Button onClick={addProject}>Add and Assign</Button>
+            </div>
+            <ul>
+                {projects.map(project =>
+                    <li key={project.id} className="flex items-center gap-2">
+                        <span>{project.name} <span className="text-xs text-gray-500 ml-2">({project.status} to: {project.assignedTo.join(", ")})</span></span>
+                        <Button variant="destructive" size="sm" onClick={() => removeProject(project.id)}>Delete</Button>
+                    </li>
+                )}
+            </ul>
+        </div>
+    );
+};
+
+const AdminDashboard: React.FC<{ projects: Project[] }> = ({ projects }) => {
+    // Sample stats (would be calculated/queried in real app)
+    const totalEmployees = 24;
+    const totalEmployeesChange = 2;
+    const activeProjects = 8;
+    const projectsDue = 3;
+    const totalHours = 1280;
+    const totalHoursChange = 12;
+    const avgHoursPerEmployee = 35.2;
+    const avgHoursChange = 5;
+
+    // Top performers (static for demo)
+    const topPerformers = [
+        { name: "JOHN", hours: 42, projects: 3, percent: 95 },
+        { name: "JACK", hours: 38, projects: 2, percent: 92 },
+        { name: "MIA", hours: 40, projects: 4, percent: 88 },
+        { name: "ANNA", hours: 35, projects: 2, percent: 90 },
+    ];
+
+    // Recent activity (static for demo)
+    const recentActivity = [
+        { who: "JOHN", what: "Logged 8h on IoT Sensor Module", when: "2 hours ago" },
+        { who: "JACK", what: "Completed task on Embedded Dashboard", when: "4 hours ago" },
+        { who: "MIA", what: "Started work on Firmware Update", when: "6 hours ago" },
+        { who: "ANNA", what: "Logged 6h on Hardware Testing", when: "8 hours ago" },
+    ];
+
+    // Simple bar chart data: make up something to illustrate Project Hours Distribution.
+    const projectHours = [
+        { name: "IoT Sensor Module", hours: 350 },
+        { name: "Embedded Dashboard", hours: 280 },
+        { name: "Firmware Update", hours: 230 },
+        { name: "Hardware Testing", hours: 420 },
+    ];
+    const maxProjectHours = Math.max(...projectHours.map(p => p.hours), 1);
+
+    return (
+        <div>
+            <h2 className="text-2xl font-bold text-cyan-700 mb-6">Admin Dashboard</h2>
+
+            {/* Stat cards */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <div className="rounded-xl bg-white shadow p-5 flex flex-col gap-1">
+                    <span className="text-sm font-semibold text-gray-500">Total Employees</span>
+                    <span className="text-2xl font-bold text-blue-600">{totalEmployees}</span>
+                    <span className="text-xs text-green-600">{totalEmployeesChange > 0 && "+"}{totalEmployeesChange} from last month</span>
+                </div>
+                <div className="rounded-xl bg-white shadow p-5 flex flex-col gap-1">
+                    <span className="text-sm font-semibold text-gray-500">Active Projects</span>
+                    <span className="text-2xl font-bold text-violet-700">{activeProjects}</span>
+                    <span className="text-xs text-orange-600">{projectsDue} due this week</span>
+                </div>
+                <div className="rounded-xl bg-white shadow p-5 flex flex-col gap-1">
+                    <span className="text-sm font-semibold text-gray-500">Total Hours (Week)</span>
+                    <span className="text-2xl font-bold text-cyan-800">{totalHours}h</span>
+                    <span className="text-xs text-green-600">+{totalHoursChange}% from last week</span>
+                </div>
+                <div className="rounded-xl bg-white shadow p-5 flex flex-col gap-1">
+                    <span className="text-sm font-semibold text-gray-500">Avg Hours/Employee</span>
+                    <span className="text-2xl font-bold text-yellow-700">{avgHoursPerEmployee}h</span>
+                    <span className="text-xs text-green-600">+{avgHoursChange}% from last week</span>
+                </div>
+            </div>
+
+            {/* Two column grid */}
+            <div className="grid md:grid-cols-3 gap-8 mb-8">
+                {/* Weekly Hours Trend chart placeholder */}
+                <div className="rounded-xl bg-white shadow p-6 flex flex-col justify-between">
+                    <span className="font-bold mb-2">Weekly Hours Trend</span>
+                    <div className="flex-1 flex items-center justify-center text-gray-400 h-36">[Insert weekly hours trend chart here]</div>
+                </div>
+
+                {/* Project Hours Distribution as a horizontal bar chart */}
+                <div className="rounded-xl bg-white shadow p-6 flex flex-col">
+                    <span className="font-bold mb-2 mb-4">Project Hours Distribution</span>
+                    <div className="flex flex-col gap-2">
+                        {projectHours.map(p => (
+                            <div key={p.name} className="flex items-center gap-2">
+                                <span className="text-xs font-medium w-40 truncate">{p.name}</span>
+                                <div className="flex-1 h-3 bg-gray-200 rounded relative">
+                                    <div
+                                        style={{ width: `${(p.hours / maxProjectHours) * 100}%` }}
+                                        className="absolute inset-y-0 left-0 bg-blue-500 rounded"
+                                    ></div>
+                                </div>
+                                <span className="ml-2 text-sm">{p.hours}h</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Top performers */}
+                <div className="rounded-xl bg-white shadow p-6 flex flex-col">
+                    <span className="font-bold mb-2">Top Performers</span>
+                    <div className="flex flex-col gap-2">
+                        {topPerformers.map(tp => (
+                            <div key={tp.name} className="flex justify-between items-center border-b py-2">
+                                <div>
+                                    <span className="font-semibold">{tp.name}</span>
+                                    <span className="ml-2 text-xs text-gray-400">{tp.hours}h • {tp.projects} projects</span>
+                                </div>
+                                <div className="text-green-700 font-extrabold">{tp.percent}%</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* Recent Activity */}
+            <div className="rounded-xl bg-white shadow px-8 py-6 mb-4">
+                <div className="font-bold mb-2">Recent Activity</div>
+                <div className="flex flex-col gap-3">
+                    {recentActivity.map((act, i) => (
+                        <div key={i} className="flex justify-between items-center border-b py-2 text-sm">
+                            <div>
+                                <span className="font-semibold">{act.who}</span>
+                                <span className="mx-2 text-cyan-700">{act.what}</span>
+                            </div>
+                            <div className="text-xs text-gray-500">{act.when}</div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+};
+
+
+// -- Main App Component --
+export default function App() {
+    const [currentUser, setCurrentUser] = useState(usersList[0]);
+    const [projects, setProjects] = useState<Project[]>([...initialProjects]);
+
+    const addUserProject = (name: string) => {
+        setProjects(p =>
+            [...p, { id: Math.floor(Math.random() * 100000), name, assignedTo: [currentUser.name], status: "Active", hours: 0 }]
+        );
+    };
+    const removeUserProject = (id: number) => {
+        setProjects(p => p.filter(pr => pr.id !== id || !pr.assignedTo.includes(currentUser.name)));
+    };
+
+    return (
+        <Router>
+            <div className="min-h-screen bg-white flex flex-col relative">
+                <header className="py-6 px-8 bg-white shadow flex items-center justify-between sticky top-0 z-30">
+                    <div className="text-2xl font-bold text-cyan-700">QMAX Dashboard</div>
+                    <div className="flex items-center gap-4">
+                        {usersList.map(u => (
+                            <Button key={u.id} variant={currentUser.name === u.name ? "default" : "outline"} onClick={() => setCurrentUser(u)}>
+                                {u.isAdmin ? "Admin" : u.name}
+                            </Button>
+                        ))}
+                    </div>
+                </header>
+                <aside className="fixed top-0 left-0 w-64 h-screen bg-[#17263c] text-white shadow-xl flex flex-col pt-8 z-40">
+                    <Link className="flex items-center mb-8 ml-4 text-lg font-bold text-cyan-700" to="/dashboard">
+                        <Image src="/qs-logo.png" className="mr-2 w-8 h-8" alt="QMAX" />
+                        <span style={{ color: '#111', fontWeight: 800, fontSize: '1.4rem' }}>QMAX</span>
+                    </Link>
+                    <div className="flex flex-col gap-1 w-full">
+                        <div className="px-5 text-xs text-gray-400 mb-1">Employee Portal</div>
+                        {sidebarNav.filter(e => !e.admin).map(item => (
+                            <Link
+                                key={item.label}
+                                to={item.route}
+                                className="flex items-center px-5 py-2 gap-3 hover:bg-cyan-100 rounded transition font-medium"
+                                style={{ color: "#fff" }}
+                            >
+                                <span style={{ color: "#fff", display: "flex", alignItems: "center" }}>{item.icon}</span>
+                                <span style={{ color: "#fff" }}>{item.label}</span>
+                            </Link>
+                        ))}
+                        <div className="px-5 text-xs text-gray-400 mt-5 mb-1">Admin Portal</div>
+                        {currentUser.isAdmin && sidebarNav.filter(e => e.admin).map(item => (
+                            <Link
+                                key={item.label}
+                                to={item.route}
+                                className="flex items-center px-5 py-2 gap-3 hover:bg-orange-100 rounded transition font-medium text-orange-800"
+                            >{item.icon}<span>{item.label}</span></Link>
+                        ))}
+                        <div className="px-5 mt-8">
+                            <Link to="/settings" className="flex items-center gap-2 hover:text-cyan-700">
+                                <User2 className="w-5 h-5" /> Settings
+                            </Link>
+                            <Link to="/logout" className="flex items-center gap-2 hover:text-red-700 mt-2">
+                                <Power className="w-5 h-5" /> Logout
+                            </Link>
+                        </div>
+                    </div>
+                </aside>
+                <main className="ml-64 p-9 min-h-screen">
+                    <Routes>
+                        <Route path="/" element={<DashboardHome projects={projects} user={currentUser} />} />
+                        <Route path="/dashboard" element={<DashboardHome projects={projects} user={currentUser} />} />
+                        <Route path="/projects" element={<MyProjects projects={projects} user={currentUser} onAddProject={addUserProject} onRemoveProject={removeUserProject} />} />
+                        <Route path="/timesheet" element={<Timesheet user={currentUser} projects={projects} />} />
+                        <Route path="/log-time" element={<LogTime user={currentUser} projects={projects} />} />
+                        <Route path="/admin-dashboard" element={<AdminDashboard projects={projects} />} />
+                        <Route path="/manage-projects" element={currentUser.isAdmin ? <ManageProjects projects={projects} setProjects={setProjects} /> : <div>Unauthorized</div>} />
+                        <Route path="/manage-users" element={<ManageUsers />} />
+                        <Route path="/reports" element={<Reports />} />
+                        <Route path="/settings" element={<Settings />} />
+                        <Route path="/logout" element={<Logout />} />
+                    </Routes>
+                    <footer className="centered-footer">
+                        Copyright © 2025 <span className="company">Qmax Systems India Pvt Ltd.</span> All rights reserved.
+                    </footer>
+                </main>
+            </div>
+        </Router>
+    );
+}
+

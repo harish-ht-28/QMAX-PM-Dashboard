@@ -1,0 +1,160 @@
+"use client";
+import { useState, ChangeEvent } from "react";
+import { useRouter } from "next/navigation";
+import Input from "../../../../components/input";
+import Button from "../../../../components/button";
+import { Mail, Lock } from "lucide-react";
+
+function AppLogoPanel() {
+  return (
+    <div className="flex flex-col items-center justify-center h-full w-full">
+      <img
+        src="/qmax-logo.png"
+        alt="QMAX SYSTEMS"
+        className="h-24 w-auto mb-6 select-none"
+        draggable={false}
+        style={{ userSelect: "none" }}
+      />
+      <div className="text-center text-lg text-cyan-800 font-semibold">
+        Welcome to the QMAX PM Portal!
+      </div>
+    </div>
+  );
+}
+
+export default function Login() {
+  const router = useRouter();
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({});
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+    setErrors({});
+  };
+
+  const validate = () => {
+    const newErrors: { email?: string; password?: string } = {};
+    if (!form.email.trim()) newErrors.email = "Email is required";
+    if (!form.password.trim()) newErrors.password = "Password is required";
+    return newErrors;
+  };
+
+  const handleLogin = () => {
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors({ ...validationErrors });
+      return;
+    }
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      if (form.email === "admin" && form.password === "admin") {
+        router.push("/dashboard");
+      } else {
+        setErrors({ general: "Invalid credentials" });
+      }
+    }, 1000);
+  };
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center w-screen h-screen overflow-hidden">
+      {/* Vibrant full window background */}
+      <div
+        className="absolute inset-0 w-full h-full"
+        style={{
+          background: "linear-gradient(120deg, #00e1ff 0%, #19c4ff 30%, #0196c7 100%)"
+        }}
+      />
+      <svg
+        className="absolute -top-24 -left-32 blur-[60px] opacity-70"
+        width="700"
+        height="700"
+        fill="none"
+        viewBox="0 0 700 700"
+      >
+        <circle cx="350" cy="350" r="350" fill="#00ecbf" />
+      </svg>
+      <svg
+        className="absolute top-0 right-0 opacity-70"
+        width="900"
+        height="900"
+        fill="none"
+        viewBox="0 0 900 900"
+      >
+        <polygon points="900,0 900,900 600,900" fill="#a2e2f7" />
+      </svg>
+      
+      {/* Wider, dual-panel login card */}
+      <div className="relative z-10 flex w-full max-w-4xl bg-white rounded-xl shadow-2xl overflow-hidden">
+        {/* Left logo/welcome panel */}
+        <div className="hidden md:flex w-1/2 bg-cyan-50 items-center justify-center">
+          <AppLogoPanel />
+        </div>
+        {/* Right login form panel */}
+        <div className="flex-1 flex flex-col justify-center p-8 sm:p-12">
+          <h2 className="text-3xl font-extrabold text-neutral-900 mb-2">PM-DASH LOGIN</h2>
+          <p className="mb-6 text-neutral-700">Welcome back, please login to your account.</p>
+          <form onSubmit={e => e.preventDefault()} noValidate className="space-y-6">
+            {errors.general && (
+              <div className="text-red-600 text-center font-semibold mb-2">
+                {errors.general}
+              </div>
+            )}
+            <div>
+              <label className="block mb-1 text-neutral-800 font-medium">Email Address</label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-2.5 text-neutral-400" size={20} />
+                <Input
+                  type="email"
+                  name="email"
+                  placeholder="you@example.com"
+                  value={form.email}
+                  onChange={handleChange}
+                  className={`pl-10 pr-4 ${errors.email ? "border-red-500" : ""}`}
+                  autoComplete="username"
+                />
+              </div>
+              {errors.email && <div className="text-red-500 text-sm">{errors.email}</div>}
+            </div>
+            <div>
+              <label className="block mb-1 text-neutral-800 font-medium">Password</label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-2.5 text-neutral-400" size={20} />
+                <Input
+                  type="password"
+                  name="password"
+                  placeholder="Enter your password"
+                  value={form.password}
+                  onChange={handleChange}
+                  className={`pl-10 pr-4 ${errors.password ? "border-red-500" : ""}`}
+                  autoComplete="current-password"
+                />
+              </div>
+              {errors.password && <div className="text-red-500 text-sm">{errors.password}</div>}
+            </div>
+            <div className="flex justify-between items-center mb-1">
+              <div />
+              <a href="/auth/forgot-password" className="text-sm text-cyan-700 hover:underline">
+                Forgot Password?
+              </a>
+            </div>
+            <Button
+              className="w-full text-base font-semibold"
+              disabled={loading}
+              onClick={handleLogin}
+            >
+              {loading ? "Signing In..." : "Login"}
+            </Button>
+          </form>
+          <p className="mt-7 text-center text-neutral-600">
+            New user?{" "}
+            <a href="/auth/signup" className="font-semibold text-blue-700 hover:underline">
+              Create an account
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}

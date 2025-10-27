@@ -1,0 +1,132 @@
+body,
+.app-background,
+.main-content {
+  background: #fff !important; /* true full white */
+}
+
+.sidebar {
+  background: #17263c !important; /* deep navy blue */
+  color: #fff;
+  width: 260px;
+  min-width: 260px;
+  height: 100vh;
+  border-right: 1px solid #e4eaf3;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+}
+
+.sidebar-logo {
+  height: 60px;
+  padding-left: 2rem;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  background: #17263c;
+  border-bottom: 1px solid #131f31;
+  margin-bottom: 16px;
+}
+.sidebar-items {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.sidebar a {
+  color: #f1f4f9;
+  text-decoration: none;
+  padding: 12px 28px;
+  border-left: 3.5px solid transparent;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: background 0.13s, border-left-color 0.13s, color 0.13s;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.sidebar a:hover,
+.sidebar a.active {
+  background: #223456;
+  color: #00c0f0 !important;
+  border-left: 3.5px solid #00c0f0;
+}
+
+.sidebar-group > span {
+  color: #a0aec0;
+  padding-left: 34px;
+  font-size: 0.97rem;
+  margin-bottom: 0.3rem;
+  display: block;
+}
+
+/* Sidebar collapses or headings if needed */
+.sidebar-group {
+  margin-bottom: 20px;
+}
+
+.main-content {
+  margin-left: 260px;
+  min-height: 100vh;
+  background: #fff;
+  padding: 0;
+  color: #222;
+}
+
+/* Page topbar */
+.top-bar {
+  height: 64px;
+  background: #fff;
+  border-bottom: 1.5px solid #e4eaf3;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2.2rem;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+/* Avatar/ initials styling (if shown) */
+.avatar {
+  background: #2357c4;
+  color: #fff;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  font-size: 1.07rem;
+  font-weight: bold;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+}
+.page-content {
+  background: #f8fafc;
+  padding: 36px 44px 40px 44px;
+  min-height: 88vh;
+  border-radius: 0px;
+  box-shadow: none;
+  font-size: 1.07rem;
+}
+
+/* Utility and highlight colors */
+:root {
+  --c-cyan: #38bdf8;
+}
+
+/* Panel/Widget Container Example */
+.panel-container {
+  background: #fff;
+  border-radius: 13px;
+  box-shadow: 0 2.5px 13px 0 rgba(128,133,140,0.13);
+  margin-bottom: 20px;
+  padding: 28px 28px 16px 28px;
+}
