@@ -13,5 +13,4 @@ pnpm dev
 # or
 bun dev
 
-![image alt](https://github.com/harish-ht-28/QMAX-PM-Dashboard/blob/4f45775c0afb5bc03c74553d49c977525a12b9e2/Login%20Page.png)
-![image alt](https://github.com/harish-ht-28/QMAX-PM-Dashboard/blob/4f45775c0afb5bc03c74553d49c977525a12b9e2/Dashboard.png)
+
